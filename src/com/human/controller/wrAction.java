@@ -54,8 +54,11 @@ public class wrAction extends HttpServlet {
 		boardvo.setPass(pass);
 		boardvo.setTitle(title);
 		
+		if(name!=null) {
 		boardDAO.insert(boardvo);
-				
+		}else {
+			System.out.println("입력할 값이 없습니다.");
+		}
 		response.sendRedirect("boardList"); //redirect
 		
 	}

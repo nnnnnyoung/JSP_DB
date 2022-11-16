@@ -3,7 +3,10 @@ package com.human.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 import com.human.vo.BoardVO;
 
@@ -32,7 +35,8 @@ public class BoardDAO {
 		return false;
 	}
 	
-	public void insert(BoardVO boardvo) {
+	
+	public void insert(BoardVO boardvo) { //작성한 게시글을 DB에 저장
 		if(connect()) {
 			String sql="insert into bboard values (board_cnt.nextval,?,?,?,?,?,default,default)";
 			try {
@@ -44,10 +48,69 @@ public class BoardDAO {
 				psmt.setString(5, boardvo.getPass());
 				int r=psmt.executeUpdate();
 				System.out.println("입력 성공");
+				conn.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				System.out.println("입력 실패");
 			}
 		}
 	}
+	
+	   public ArrayList<BoardVO> selectAll(){
+		      ResultSet rs = null; // 쿼리의 결과를 리턴받기 위한 객체
+		      ArrayList<BoardVO> allList = new ArrayList<>();
+		      if(connect()) {
+		         try {
+		            String sql="select * from bboard";  // 완성된쿼리
+		            Statement stmt = conn.createStatement();
+		            rs = stmt.executeQuery(sql);
+		            while(rs.next()) {  // rs는 튜플을 통채로 가져온다.
+		               BoardVO b = new BoardVO(); //튜플하나당 객체 한개 
+		               b.setName(rs.getString("name"));
+		               b.setCnt(rs.getInt("cnt"));
+		               b.setContent(rs.getString("content"));
+		               b.setEmail(rs.getString("email"));
+		               b.setIndate(rs.getString("indate"));
+		               b.setTitle(rs.getString("title"));
+		               b.setNum(rs.getInt("num"));
+		               allList.add(b);
+		            }
+		         } catch (Exception e) {
+		            // TODO: handle exception
+		         }
+		         
+		      }
+		      return allList;
+		      
+		      
+		   }
+
+	   public BoardVO selectOne(String num){
+	       ResultSet rs = null; // 쿼리의 결과를 리턴받기 위한 객체
+	         
+	         if(connect()) {
+	            try {
+	               String sql="select * from bboard where num="+num;  // 완성된쿼리
+	               Statement stmt = conn.createStatement();
+	               rs = stmt.executeQuery(sql);
+	               while(rs.next()) {  // rs는 튜플을 통채로 가져온다.
+	                  BoardVO b = new BoardVO(); //튜플하나당 객체 한개 
+	                  b.setName(rs.getString("name"));
+	                  b.setCnt(rs.getInt("cnt"));
+	                  b.setContent(rs.getString("content"));
+	                  b.setEmail(rs.getString("email"));
+	                  b.setIndate(rs.getString("indate"));
+	                  b.setTitle(rs.getString("title"));
+	                  b.setNum(rs.getInt("num"));
+	                  return b;
+	               }
+	            } catch (Exception e) {
+	               // TODO: handle exception
+	            }
+	            
+	         }
+	         return null;
+	   }
+
+
 }
